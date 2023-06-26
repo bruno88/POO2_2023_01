@@ -129,8 +129,8 @@ console.log('total para o livro: ' + nf1.livro.titulo + " = " + nf1.calculaTotal
 
 // Exercício de figuras geometricas:
 
-const ponto1 = new Ponto(2,4);
-const ponto2 = new Ponto(6,2);
+const ponto1 = new Ponto(2, 4);
+const ponto2 = new Ponto(6, 2);
 const ret1 = new Retangulo(ponto1, ponto2);
 console.log("Dados do Retângulo:");
 
@@ -145,8 +145,8 @@ console.log(circulo1.getRaio());
 console.log(circulo1.calculaArea());
 console.log(circulo1.calculaPerimetro());
 
-const ponto3 = new Ponto(3,5);
-const ponto4 = new Ponto(4,2);
+const ponto3 = new Ponto(3, 5);
+const ponto4 = new Ponto(4, 2);
 const triangulo1 = new Triangulo(ponto3, ponto4);
 console.log("Dados do Triangulo:");
 console.log(triangulo1.getAltura());
@@ -161,14 +161,177 @@ vetFiguras.push(circulo1);
 vetFiguras.push(triangulo1);
 //vetFiguras.push(funcCaio);
 
-exibeDadosFigura();
+// Fazendo uso de async/await
+/*console.log("### Trabalhando com Async/await ###");
+rodaDepois("Select * from pessoas");
+console.log("O código continuou sendo executado enquanto a função async é resolvida");
+*/
 
-function exibeDadosFigura():void{
+console.log("### Trabalhando com Promises ###");
+// Fazendo uso de promisses, primeiro teste:
+/*const nossaPromise =
+    new Promise((resolve, reject) => {
+        // Vamos tentar abrir um arquivo
+        let isOpened: boolean = false;
+        if (isOpened) {
+            resolve("Abriu o arquivo");
+        } else {
+            reject("Não abriu o arquivo")
+        }
+    });
+
+// Quando a nossaPromise for completada...
+nossaPromise
+    .then((fromResolve) => { // then = completado com sucesso
+        console.log("1 -" + fromResolve); // Imprime o conteúdo da promessa
+    })
+    .catch((fromReject) => { // catch erros
+        console.error("2 -" + fromReject); // Mas em caso de erro, imprime o erro
+    });*/
+
+
+// Segundo teste, usando Resolve encadeado:
+/*abreArquivo()
+    //.then((fromResolve) => { console.log(fromResolve); })
+    .then(() => { console.log(lerArquivo()); })
+    .then(() => { console.log(deletarArquivo()); })
+    .then(() => { console.log("Tudo foi realizado"); });
+*/
+// Terceiro teste, com os catch
+/*abreArquivo()
+    .then(() => lerArquivo()
+        .then(() => deletarArquivo()
+            .then(() => console.log("Tudo foi realizado"))
+            .catch((fromReject) => console.log(fromReject)))
+        .catch((fromReject) => console.log(fromReject)))
+    .catch((fromReject) => console.log(fromReject));
+*/
+
+// Conferir Axios
+// Funções do programa
+function abreArquivo(): Promise<string> {
+    // Tenta abrir o arquivo e retorna um boolean pra sucesso ou fracasso
+    return new Promise((resolve, reject) => {
+        // Vamos tentar abrir um arquivo
+        let isOpened: boolean = true;
+        if (isOpened) {
+            resolve("Abriu o arquivo");
+        } else {
+            reject("Não abriu o arquivo")
+        }
+    });
+};
+
+function lerArquivo(): Promise<string> {
+    // Tenta abrir o arquivo e retorna um boolean pra sucesso ou fracasso
+    return new Promise((resolve, reject) => {
+        // Vamos tentar abrir um arquivo
+        let isOpened: boolean = true;
+        if (isOpened) {
+            resolve("Leu o arquivo");
+        } else {
+            reject("Não leu o arquivo")
+        }
+    });
+};
+
+function deletarArquivo(): Promise<string> {
+    // Tenta abrir o arquivo e retorna um boolean pra sucesso ou fracasso
+    // Logica: Primeiro eu abro o arquivo, depois leio, depois deleto.
+    return new Promise((resolve, reject) => {
+        // Vamos tentar abrir um arquivo
+        let isOpened: boolean = false;
+        if (isOpened) {
+            resolve("Deletou o arquivo");
+        } else {
+            reject("Não deletou o arquivo")
+        }
+    });
+};
+
+function exibeDadosFigura(): void {
     console.log("\n### Leitura das Figuras ###");
-    
+
     vetFiguras.forEach(figura => {
         console.log("Dados do " + figura.constructor.name);
         console.log("Area: " + figura.calculaArea().toFixed(2));
         console.log("Perímetro: " + figura.calculaPerimetro().toFixed(2));
     });
+};
+
+async function rodaDepois(texto: string) {
+    await (3000)
+    let resultado = await (getDadosFromSQL(texto));
+    return resultado;
+};
+
+
+async function getDadosFromSQL(sql: string) {
+    console.log("Comecei a rodar aqui");
+    exibeDadosFigura();
+    //const vetorPessoas: any = [];
+    const vetorPessoas = ["Ana", "Bia", "Caio", "Dani"];
+    console.log("Terminei de rodar ");
+
+    if (vetorPessoas.length == 0) {
+        throw new Error("Vetor em branco");
+    } else {
+        return vetorPessoas;
+    }
+};
+
+async function espera(): Promise<string> {
+    await delay(5000);
+    console.log("Passaram-se 5 segundos");
+
+    return new Promise((resolve, reject) => {
+        let bemSucedido: boolean = true;
+        if (bemSucedido) {
+            resolve("Bem sucedido");
+        } else {
+            reject("Mal sucedido")
+        }
+    });
 }
+
+async function getCEPFromViaCEP(): Promise<string> {
+    const url = "https://viacep.com.br/ws/29650000/json/";
+    const response = await fetch(url);
+    const jsonData = response.json();
+
+    return new Promise((resolve, reject) => {
+
+        if (jsonData) {
+            resolve(jsonData);
+        } else {
+            reject()
+        }
+    });
+}
+
+/*
+espera()
+    .then((fromResolve) => console.log(fromResolve))
+    .catch((fromReject) => console.error(fromReject));
+*/
+
+getCEPFromViaCEP()
+    .then((fromResolve:any) => { //Forçando o tipo desconhecido
+        console.log("a"+typeof(fromResolve));
+    
+        console.log(fromResolve) // Para melhor vermos o objeto
+        console.log("CEP: " + fromResolve['cep']);
+        console.log("Cidade: " + fromResolve['localidade']);
+        // pega os dados, cria objeto, salva
+        // (...)
+    })
+    .catch((fromReject) => console.error("Msg de erro: " +
+                            fromReject.name + ": " +
+                            fromReject.message));
+
+    
+console.log("Quando isso vai ser impresso no console????");
+
+function delay(time: number) {
+    return new Promise(resolve => setTimeout(resolve, time));
+};
