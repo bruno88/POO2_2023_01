@@ -3,11 +3,11 @@
 
 async function getCEPFromViaCEP(): Promise<Response> {
     // Para testar: coloque alguma letra a mais na URL abaixo e o fetch dará erro.
-    const url = "https://viacep.com.br/ws/29650000/json/";
+    const url = "https://viacep.com.br/ws/2528498/json/";
     const response = await fetch(url);
     return response.json();
 }
-
+/*
 // Chamando a função
 getCEPFromViaCEP()
     .then((fromResolve: any) => { //Forçando o tipo desconhecido
@@ -16,11 +16,12 @@ getCEPFromViaCEP()
         console.log("Cidade: " + fromResolve['localidade']);
         // pega os dados, cria objeto, salva
         // (...)
+        
     })
     .catch((fromReject) => console.error("Msg de erro: " +
         fromReject.name + ": " +
         fromReject.message));
-
+*/
 // Trabalhando com async/await e Promises encadeadas
 
 async function abrirArquivo(): Promise<string> {
@@ -58,19 +59,32 @@ async function formatarArquivo(): Promise<string> {
         if (isFormatted) {
             resolve("Formatou o arquivo");
         } else {
-            reject("Não formatou o arquivo")
+            reject("Não formatou o arquivo");
         }
     });
 };
 
-async function formatarDocumento(){
+async function formatarDocumento() {
+    // Execução da função abrirArquivo de forma assíncrona
     await (abrirArquivo()
-    .then(() => lerArquivo()
-        .then(() => formatarArquivo()
-            .then(() => console.log("Tudo foi realizado"))
-            .catch((fromReject) => console.log(fromReject)))
-        .catch((fromReject) => console.log(fromReject)))
-    .catch((fromReject) => console.log(fromReject)));
+        // Caso bem sucedido ABERTURA, o retorno da função está no fromResolve
+        .then((fromResolve) => {
+            console.log(fromResolve);
+            lerArquivo()
+                // Caso bem sucedido LEITURA, o retorno da função está no fromResolve
+                .then((fromResolve) => {
+                    console.log(fromResolve);
+                    formatarArquivo()
+                        // Caso bem sucedida FORMATAÇÃO, o retorno da função está no fromResolve
+                        .then((fromResolve) => {
+                            console.log(fromResolve);
+                            console.log("Tudo foi realizado")
+                            // Caso mal sucedida FORMATAÇÃO, o retorno da função está no fromReject
+                        }).catch((fromReject) => console.log(fromReject))
+                    // Caso mal sucedida LEITURA, o retorno da função está no fromReject
+                }).catch((fromReject) => console.log(fromReject))
+            // Caso mal sucedida ABERTURA, o retorno da função está no fromReject
+        }).catch((fromReject) => console.log(fromReject)));
 }
 
 formatarDocumento();
